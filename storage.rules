@@ -1,0 +1,138 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc() {
+      return firestore.get(/databases/(default)/documents/users/$(request.auth.uid));
+    }
+
+    function isApproved() {
+      return signedIn() && userDoc().data.status == "approved";
+    }
+
+    function isAdmin() {
+      return isApproved() && userDoc().data.role == "admin";
+    }
+
+    function projectDoc(projectId) {
+      return firestore.get(/databases/(default)/documents/projects/$(projectId));
+    }
+
+    function isProjectMember(projectId) {
+      return isApproved()
+        && (projectDoc(projectId).data.clientId == request.auth.uid
+          || projectDoc(projectId).data.freelancerId == request.auth.uid);
+    }
+
+    function contractDoc(contractId) {
+      return firestore.get(/databases/(default)/documents/contracts/$(contractId));
+    }
+
+    function isContractClient(contractId) {
+      return signedIn() && contractDoc(contractId).data.clientId == request.auth.uid;
+    }
+
+    function isContractFreelancer(contractId) {
+      return signedIn() && contractDoc(contractId).data.freelancerId == request.auth.uid;
+    }
+
+    function isContractMember(contractId) {
+      return isContractClient(contractId) || isContractFreelancer(contractId);
+    }
+
+    function workspaceSectionWriteAllowed(contractId, section) {
+      return (section == "requirements" && isContractClient(contractId))
+        || (section == "client" && isContractClient(contractId))
+        || (section == "freelancer" && isContractFreelancer(contractId));
+    }
+
+    function workspaceMimeAllowed(contentType) {
+      return contentType in [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/zip",
+        "application/x-zip-compressed",
+        "image/png",
+        "image/jpg",
+        "image/jpeg",
+        "image/pjpeg"
+      ];
+    }
+
+    function workspaceNameAllowed(fileName) {
+      return fileName.matches(".*\\.(pdf|doc|docx|zip|png|jpg|jpeg)$");
+    }
+
+    match /projectFiles/{projectId}/{fileName} {
+      allow read: if isAdmin() || isProjectMember(projectId);
+      allow write: if isAdmin()
+        || (signedIn() && projectDoc(projectId).data.freelancerId == request.auth.uid);
+    }
+
+    match /userCertificates/{uid}/{fileName} {
+      allow write: if signedIn() && request.auth.uid == uid;
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
+    }
+
+    match /userResumes/{uid}/{fileName} {
+      allow write: if signedIn() && request.auth.uid == uid;
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
+    }
+
+    match /userGovIds/{uid}/{fileName} {
+      allow write: if signedIn() && request.auth.uid == uid;
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
+    }
+
+    match /userClientGovIds/{uid}/{fileName} {
+      allow write: if signedIn() && request.auth.uid == uid;
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
+    }
+
+    match /userClientDocuments/{uid}/{fileName} {
+      allow write: if signedIn() && request.auth.uid == uid;
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
+    }
+
+    match /profilePictures/{uid}/{fileName} {
+      allow write: if signedIn() && request.auth.uid == uid;
+      allow read: if isAdmin() || signedIn();
+    }
+
+    match /contracts/{contractId}/{section}/{fileName} {
+      allow read: if isContractMember(contractId);
+      allow write: if workspaceSectionWriteAllowed(contractId, section)
+        && workspaceNameAllowed(fileName)
+        && request.resource.size <= 20 * 1024 * 1024
+        && (
+          request.resource.contentType == null
+          || request.resource.contentType == ""
+          || workspaceMimeAllowed(request.resource.contentType)
+        );
+    }
+
+    match /contractRequirements/{contractId}/{fileName} {
+      allow write: if isContractClient(contractId);
+      allow read: if isAdmin() || isContractClient(contractId) || isContractFreelancer(contractId);
+    }
+
+    match /contractFlows/{contractId}/{fileName} {
+      allow write: if isContractFreelancer(contractId);
+      allow read: if isAdmin() || isContractClient(contractId) || isContractFreelancer(contractId);
+    }
+
+    match /contractFeedback/{contractId}/{fileName} {
+      allow write: if isContractClient(contractId);
+      allow read: if isAdmin() || isContractClient(contractId) || isContractFreelancer(contractId);
+    }
+
+    match /contractFinal/{type}/{contractId}/{fileName} {
+      allow write: if isContractFreelancer(contractId);
+      allow read: if isAdmin() || isContractClient(contractId) || isContractFreelancer(contractId);
+    }
+  }
+}

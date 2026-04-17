@@ -1,0 +1,644 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import Button from "../../components/Button.jsx";
+import BrandLogo from "../../components/BrandLogo.jsx";
+
+const copy = {
+  en: {
+    brand: "Growlanzer",
+    nav: ["Find Talent", "Find Work"],
+    login: "Log in",
+    getStarted: "Get Started",
+    heroTag: "Trusted freelancer marketplace",
+    heroTitleA: "Hire proven freelancers and",
+    heroTitleB: "ship projects faster",
+    heroBody:
+      "Connect with verified talent for development, design, marketing, and operations. Post jobs, compare proposals, and manage secure payouts in one workflow.",
+    heroCtaA: "Hire Freelancers",
+    heroCtaB: "Find Projects",
+    trustedTitle: "Teams hiring on Growlanzer",
+    stats: [
+      { value: "48,000+", label: "Active freelancers" },
+      { value: "320,000+", label: "Projects completed" },
+      { value: "36 hrs", label: "Average hire time" }
+    ],
+    categoriesTitle: "Popular hiring categories",
+    categoriesSub: "Real skills clients hire for every week.",
+    categoriesLink: "Explore all categories",
+    categories: [
+      { title: "Web Development", rate: "INR 1,800/hr avg", experts: "12,400 experts" },
+      { title: "UI/UX Design", rate: "INR 1,500/hr avg", experts: "8,900 experts" },
+      { title: "Content & SEO", rate: "INR 1,200/hr avg", experts: "6,200 experts" },
+      { title: "Video Editing", rate: "INR 1,650/hr avg", experts: "4,100 experts" },
+      { title: "Mobile Apps", rate: "INR 2,100/hr avg", experts: "5,600 experts" },
+      { title: "Data & AI", rate: "INR 2,500/hr avg", experts: "3,900 experts" }
+    ],
+    workflowTitle: "How Growlanzer works",
+    workflow: [
+      {
+        title: "For Clients",
+        points: [
+          "Post a project with budget, timeline, and skills.",
+          "Receive verified proposals from relevant freelancers.",
+          "Hire, track milestones, and release secure payments."
+        ]
+      },
+      {
+        title: "For Freelancers",
+        points: [
+          "Create profile with skills, portfolio, and experience.",
+          "Apply to active projects matching your expertise.",
+          "Get paid through secure escrow after approval."
+        ]
+      }
+    ],
+    pricingTitle: "Simple pricing for real project teams",
+    pricingSub: "Choose the plan that fits your hiring volume.",
+    pricing: [
+      {
+        name: "Starter",
+        price: "INR 0",
+        cadence: "/month",
+        features: [
+          "Up to 3 active job posts",
+          "Basic applicant filtering",
+          "Standard support"
+        ]
+      },
+      {
+        name: "Growth",
+        price: "INR 7,999",
+        cadence: "/month",
+        features: [
+          "Unlimited job posts",
+          "Priority freelancer matching",
+          "Faster dispute handling"
+        ],
+        highlight: true
+      },
+      {
+        name: "Scale",
+        price: "INR 19,999",
+        cadence: "/month",
+        features: [
+          "Dedicated success manager",
+          "Advanced hiring analytics",
+          "Custom approval workflows"
+        ]
+      }
+    ],
+    jobsTitle: "Projects hiring now",
+    jobsLink: "View all jobs",
+    jobs: [
+      {
+        title: "E-commerce frontend revamp",
+        budget: "INR 85,000",
+        skills: "React, Tailwind, Stripe",
+        timeline: "4 weeks"
+      },
+      {
+        title: "SEO content for fintech blog",
+        budget: "INR 40,000",
+        skills: "SEO, Copywriting, CMS",
+        timeline: "3 weeks"
+      },
+      {
+        title: "Cross-platform mobile app QA",
+        budget: "INR 70,000",
+        skills: "QA, Flutter, Automation",
+        timeline: "6 weeks"
+      }
+    ],
+    proposalLabel: "Submit proposal",
+    testimonialsTitle: "What users say",
+    testimonials: [
+      {
+        quote:
+          "We hired a senior frontend freelancer in two days and shipped faster than our in-house plan.",
+        name: "Ananya Rao",
+        role: "Product Lead, ByteBridge"
+      },
+      {
+        quote:
+          "Consistent project flow and secure payouts helped me move to full-time freelancing confidently.",
+        name: "Karthik M",
+        role: "Freelance Mobile Developer"
+      }
+    ],
+    faqTitle: "Frequently asked questions",
+    faqs: [
+      {
+        q: "How fast can I hire a freelancer?",
+        a: "Most clients receive first qualified proposals within 24 to 48 hours."
+      },
+      {
+        q: "How are payments handled?",
+        a: "Payments are placed in escrow and released only after milestone approval."
+      },
+      {
+        q: "Can freelancers join for free?",
+        a: "Yes. Freelancers can create profiles and apply to projects without upfront fees."
+      },
+      {
+        q: "Is support available for disputes?",
+        a: "Yes. Admin moderation and dispute resolution are included for all paid client plans."
+      }
+    ],
+    ctaTitle: "Start hiring or freelancing today",
+    ctaBody:
+      "Join a marketplace built for real work, transparent pricing, and secure collaboration.",
+    ctaA: "Create Account",
+    ctaB: "Login",
+    footerTag: "A practical freelancer marketplace for serious clients and professionals.",
+    footerCols: [
+      {
+        title: "For Clients",
+        links: ["Post a Job", "Hire Talent"]
+      },
+      {
+        title: "For Freelancers",
+        links: ["Find Jobs", "Build Profile", "Payments"]
+      },
+      {
+        title: "Support",
+        links: ["Help Center", "Terms", "Privacy"]
+      }
+    ],
+    footerCopyL: "© 2026 Growlanzer. All rights reserved.",
+    footerCopyR: "Built for modern freelance teams."
+  },
+  ta: {
+    brand: "Growlanzer",
+    nav: ["திறமையாளர்கள்", "வேலைகள்"],
+    login: "உள்நுழை",
+    getStarted: "தொடங்கு",
+    heroTag: "நம்பகமான ஃப்ரீலான்ஸ் சந்தை",
+    heroTitleA: "சரியான ஃப்ரீலான்ஸரை தேர்வு செய்து",
+    heroTitleB: "திட்டங்களை விரைவாக முடிக்கவும்",
+    heroBody:
+      "டெவலப்மென்ட், டிசைன், மார்க்கெட்டிங், ஆப்பரேஷன் போன்ற துறைகளில் சரிபார்க்கப்பட்ட திறமையாளர்களை கண்டுபிடிக்கவும். வேலை பதிவிடவும், முன்மொழிவுகளை ஒப்பிடவும், பாதுகாப்பான கட்டணத்தை நிர்வகிக்கவும்.",
+    heroCtaA: "ஃப்ரீலான்ஸரை நியமி",
+    heroCtaB: "வேலைகளை பார்க்க",
+    trustedTitle: "இந்த நிறுவனங்கள் Growlanzer-ஐ பயன்படுத்துகின்றன",
+    stats: [
+      { value: "48,000+", label: "செயலில் உள்ள ஃப்ரீலான்ஸர்கள்" },
+      { value: "320,000+", label: "முடிக்கப்பட்ட திட்டங்கள்" },
+      { value: "36 மணி", label: "சராசரி நியமிப்பு நேரம்" }
+    ],
+    categoriesTitle: "பிரபலமான சேவை பிரிவுகள்",
+    categoriesSub: "கிளையன்ட்கள் வாரம் தோறும் நியமிக்கும் திறன்கள்.",
+    categoriesLink: "அனைத்து பிரிவுகளையும் பார்க்க",
+    categories: [
+      { title: "வெப் டெவலப்மென்ட்", rate: "INR 1,800/மணி சராசரி", experts: "12,400 நிபுணர்கள்" },
+      { title: "UI/UX டிசைன்", rate: "INR 1,500/மணி சராசரி", experts: "8,900 நிபுணர்கள்" },
+      { title: "கண்டென்ட் & SEO", rate: "INR 1,200/மணி சராசரி", experts: "6,200 நிபுணர்கள்" },
+      { title: "வீடியோ எடிட்டிங்", rate: "INR 1,650/மணி சராசரி", experts: "4,100 நிபுணர்கள்" },
+      { title: "மொபைல் ஆப்ஸ்", rate: "INR 2,100/மணி சராசரி", experts: "5,600 நிபுணர்கள்" },
+      { title: "டேட்டா & AI", rate: "INR 2,500/மணி சராசரி", experts: "3,900 நிபுணர்கள்" }
+    ],
+    workflowTitle: "Growlanzer எப்படி வேலை செய்கிறது",
+    workflow: [
+      {
+        title: "கிளையன்ட்களுக்கு",
+        points: [
+          "பட்ஜெட், காலஅளவு, திறன்களுடன் வேலை பதிவிடுங்கள்.",
+          "தேர்ந்தெடுக்கப்பட்ட ஃப்ரீலான்ஸர்களிடமிருந்து முன்மொழிவுகள் பெறுங்கள்.",
+          "நியமித்து மைல்ஸ்டோன் அடிப்படையில் கட்டணத்தை வெளியிடுங்கள்."
+        ]
+      },
+      {
+        title: "ஃப்ரீலான்ஸர்களுக்கு",
+        points: [
+          "உங்கள் திறன், அனுபவம், போர்ட்ஃபோலியோவுடன் ப்ரொஃபைல் உருவாக்குங்கள்.",
+          "உங்கள் திறனுக்கு பொருந்தும் வேலைகளுக்கு விண்ணப்பியுங்கள்.",
+          "அங்கீகாரத்திற்குப் பிறகு பாதுகாப்பான எஸ்க்ரோ வழியாக கட்டணம் பெறுங்கள்."
+        ]
+      }
+    ],
+    pricingTitle: "உண்மையான திட்ட அணிகளுக்கான எளிய விலை",
+    pricingSub: "உங்கள் நியமிப்பு அளவுக்கு பொருந்தும் திட்டத்தைத் தேர்ந்தெடுக்கவும்.",
+    pricing: [
+      {
+        name: "Starter",
+        price: "INR 0",
+        cadence: "/மாதம்",
+        features: [
+          "3 செயலில் உள்ள வேலை பதிவுகள் வரை",
+          "அடிப்படை விண்ணப்ப வடிகட்டி",
+          "சாதாரண ஆதரவு"
+        ]
+      },
+      {
+        name: "Growth",
+        price: "INR 7,999",
+        cadence: "/மாதம்",
+        features: [
+          "வரம்பில்லா வேலை பதிவுகள்",
+          "முன்னுரிமை ஃப்ரீலான்ஸர் பொருத்தம்",
+          "வேகமான தகராறு தீர்வு"
+        ],
+        highlight: true
+      },
+      {
+        name: "Scale",
+        price: "INR 19,999",
+        cadence: "/மாதம்",
+        features: [
+          "Dedicated success manager",
+          "மேம்பட்ட நியமிப்பு அனலிடிக்ஸ்",
+          "தனிப்பயன் approval workflow"
+        ]
+      }
+    ],
+    jobsTitle: "தற்போது நியமிப்பு நடைபெறும் திட்டங்கள்",
+    jobsLink: "அனைத்து வேலைகளும்",
+    jobs: [
+      {
+        title: "E-commerce frontend மாற்றம்",
+        budget: "INR 85,000",
+        skills: "React, Tailwind, Stripe",
+        timeline: "4 வாரங்கள்"
+      },
+      {
+        title: "Fintech blog க்கான SEO content",
+        budget: "INR 40,000",
+        skills: "SEO, Copywriting, CMS",
+        timeline: "3 வாரங்கள்"
+      },
+      {
+        title: "Cross-platform app QA",
+        budget: "INR 70,000",
+        skills: "QA, Flutter, Automation",
+        timeline: "6 வாரங்கள்"
+      }
+    ],
+    proposalLabel: "முன்மொழிவு அனுப்பு",
+    testimonialsTitle: "பயனர்களின் கருத்துகள்",
+    testimonials: [
+      {
+        quote:
+          "இரண்டு நாளில் senior frontend ஃப்ரீலான்ஸரை நியமித்து திட்டத்தை திட்டமிட்டதைவிட வேகமாக முடித்தோம்.",
+        name: "Ananya Rao",
+        role: "Product Lead, ByteBridge"
+      },
+      {
+        quote:
+          "தொடர்ச்சியான திட்டங்கள் மற்றும் பாதுகாப்பான கட்டணம் எனக்கு full-time freelancing-க்கு உதவியது.",
+        name: "Karthik M",
+        role: "Freelance Mobile Developer"
+      }
+    ],
+    faqTitle: "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+    faqs: [
+      {
+        q: "ஃப்ரீலான்ஸரை எவ்வளவு விரைவாக நியமிக்கலாம்?",
+        a: "பெரும்பாலான கிளையன்ட்களுக்கு 24 முதல் 48 மணிநேரத்தில் முதல் தகுதியான முன்மொழிவுகள் கிடைக்கும்."
+      },
+      {
+        q: "கட்டணங்கள் எப்படி நிர்வகிக்கப்படுகின்றன?",
+        a: "கட்டணங்கள் எஸ்க்ரோவில் வைத்துப் மைல்ஸ்டோன் அங்கீகாரத்திற்குப் பிறகே வெளியிடப்படும்."
+      },
+      {
+        q: "ஃப்ரீலான்ஸர்கள் இலவசமாக சேர முடியுமா?",
+        a: "ஆம். ஆரம்ப கட்டணமின்றி ப்ரொஃபைல் உருவாக்கி வேலைகளுக்கு விண்ணப்பிக்கலாம்."
+      },
+      {
+        q: "தகராறுகளுக்கு உதவி கிடைக்குமா?",
+        a: "ஆம். அனைத்து paid client திட்டங்களுக்கும் admin moderation மற்றும் dispute support உள்ளது."
+      }
+    ],
+    ctaTitle: "இன்றே நியமிக்கவும் அல்லது ஃப்ரீலான்ஸ் தொடங்கவும்",
+    ctaBody:
+      "உண்மையான வேலை, தெளிவான விலை, பாதுகாப்பான ஒத்துழைப்பு கொண்ட சந்தையில் இணையுங்கள்.",
+    ctaA: "கணக்கு உருவாக்கு",
+    ctaB: "உள்நுழை",
+    footerTag: "சீரியஸ் கிளையன்ட்களுக்கும் திறமையான ஃப்ரீலான்ஸர்களுக்கும் உருவாக்கப்பட்ட நடைமுறை சந்தை.",
+    footerCols: [
+      {
+        title: "கிளையன்ட்களுக்கு",
+        links: ["வேலை பதிவு", "திறமையாளரை நியமி"]
+      },
+      {
+        title: "ஃப்ரீலான்ஸர்களுக்கு",
+        links: ["வேலைகள்", "ப்ரொஃபைல்", "கட்டணங்கள்"]
+      },
+      {
+        title: "ஆதரவு",
+        links: ["உதவி மையம்", "விதிமுறைகள்", "தனியுரிமை"]
+      }
+    ],
+    footerCopyL: "© 2026 Growlanzer. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.",
+    footerCopyR: "மாடர்ன் ஃப்ரீலான்ஸ் அணிகளுக்காக உருவாக்கப்பட்டது."
+  }
+};
+
+const trustedBy = [
+  "ByteBridge",
+  "Northstar Labs",
+  "Nimbus Retail",
+  "GreenCart",
+  "Luma Health"
+];
+
+export default function Home() {
+  const [language, setLanguage] = useState("en");
+  const [openFaq, setOpenFaq] = useState(0);
+  const t = copy[language];
+  const marqueeLogos = [...trustedBy, ...trustedBy];
+  const languageToggle = (
+    <div className="rounded-xl border border-white/10 bg-white/5 p-1">
+      <button
+        type="button"
+        onClick={() => setLanguage("en")}
+        className={`min-h-[34px] rounded-lg px-2.5 py-1 text-xs ${
+          language === "en" ? "bg-white/10 text-white" : "text-slate-400"
+        }`}
+      >
+        EN
+      </button>
+      <button
+        type="button"
+        onClick={() => setLanguage("ta")}
+        className={`min-h-[34px] rounded-lg px-2.5 py-1 text-xs ${
+          language === "ta" ? "bg-white/10 text-white" : "text-slate-400"
+        }`}
+      >
+        TA
+      </button>
+    </div>
+  );
+
+  return (
+    <div className="public-shell landing-shell relative min-h-screen overflow-hidden px-4 pb-24 pt-8 sm:px-6 sm:pt-10 lg:px-16">
+      <div className="pointer-events-none absolute -top-28 left-1/4 h-72 w-72 -translate-x-1/2 rounded-full bg-glow-violet/20 blur-3xl float-slow" />
+      <div className="pointer-events-none absolute bottom-0 right-0 h-96 w-96 translate-x-1/3 rounded-full bg-glow-blue/15 blur-3xl float-slow float-delay" />
+      <div className="pointer-events-none absolute top-1/2 left-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-glow-cyan/10 blur-3xl" />
+
+      <nav className="relative z-10 border-b border-white/10 pb-5 reveal-up">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-[auto,1fr,auto] md:items-center md:gap-6">
+          <BrandLogo name={t.brand} textClassName="text-base sm:text-lg" />
+          <div className="hidden items-center justify-center gap-8 text-sm text-slate-300 md:flex">
+            {t.nav.map((label) => (
+              <Link key={label} to="/choose-role" className="transition hover:text-white">
+                {label}
+              </Link>
+            ))}
+          </div>
+          <div className="w-full space-y-2 md:flex md:w-auto md:items-center md:gap-3 md:space-y-0 md:justify-self-end">
+            <div className="w-fit md:shrink-0">{languageToggle}</div>
+            <div className="grid grid-cols-2 gap-2 md:flex md:items-center md:gap-2">
+              <Link className="w-full md:w-auto" to="/login">
+                <Button className="h-11 w-full md:w-auto" variant="ghost">
+                  {t.login}
+                </Button>
+              </Link>
+              <Link to="/choose-role" className="w-full md:w-auto">
+                <Button className="h-11 w-full md:w-auto">{t.getStarted}</Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+        <div className="mt-4 flex flex-wrap items-center gap-5 text-sm text-slate-300 md:hidden">
+          {t.nav.map((label) => (
+            <Link key={`mobile-${label}`} to="/choose-role" className="transition hover:text-white">
+              {label}
+            </Link>
+          ))}
+        </div>
+      </nav>
+
+      <section className="relative z-10 mx-auto mt-14 max-w-5xl text-center sm:mt-16">
+        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs uppercase tracking-[0.3em] text-slate-300">
+          <span className="h-2 w-2 rounded-full bg-emerald-400" />
+          {t.heroTag}
+        </div>
+        <h1 className="mt-6 font-display text-3xl font-semibold text-white sm:text-5xl lg:text-6xl">
+          {t.heroTitleA}
+          <span className="gradient-text"> {t.heroTitleB}</span>
+        </h1>
+        <p className="mx-auto mt-6 max-w-3xl text-base text-slate-300 sm:text-lg">
+          {t.heroBody}
+        </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-3 sm:gap-4">
+          <Link to="/client/signup" className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto">{t.heroCtaA}</Button>
+          </Link>
+          <Link to="/freelancer/signup" className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto" variant="ghost">
+              {t.heroCtaB}
+            </Button>
+          </Link>
+        </div>
+
+        <div className="mt-12 grid gap-4 sm:grid-cols-3">
+          {t.stats.map((item) => (
+            <div key={item.label} className="glass-card rounded-2xl px-6 py-5">
+              <p className="text-2xl font-semibold text-white">{item.value}</p>
+              <p className="mt-2 text-sm text-slate-400">{item.label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-xs text-slate-300">
+          <span className="rounded-full border border-white/10 bg-white/5 px-3 py-2">
+            Escrow-safe payments
+          </span>
+          <span className="rounded-full border border-white/10 bg-white/5 px-3 py-2">
+            Live proposal tracking
+          </span>
+          <span className="rounded-full border border-white/10 bg-white/5 px-3 py-2">
+            Admin-moderated quality
+          </span>
+        </div>
+
+        <div className="mt-10 text-xs uppercase tracking-[0.4em] text-slate-500">
+          {t.trustedTitle}
+        </div>
+        <div className="logo-marquee mt-5">
+          <div className="logo-marquee-track">
+            {marqueeLogos.map((brand, index) => (
+              <div key={`${brand}-${index}`} className="logo-marquee-item text-slate-300">
+                {brand}
+              </div>
+            ))}
+          </div>
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-14 bg-gradient-to-r from-night-900/70 to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-14 bg-gradient-to-l from-night-900/70 to-transparent" />
+        </div>
+      </section>
+
+      <section className="relative z-10 mx-auto mt-16 max-w-6xl">
+        <div className="grid gap-4 lg:grid-cols-3">
+          {[
+            "Clients post detailed jobs with budgets and timelines.",
+            "Freelancers send proposals with milestones and delivery plans.",
+            "Admin assignment keeps quality high and project kickoff fast."
+          ].map((line) => (
+            <div key={line} className="glass-card rounded-2xl p-4 text-sm text-slate-300">
+              {line}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="relative z-10 mx-auto mt-16 max-w-6xl sm:mt-20">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="font-display text-2xl font-semibold text-white sm:text-3xl">
+              {t.categoriesTitle}
+            </h2>
+            <p className="mt-2 text-sm text-slate-400">{t.categoriesSub}</p>
+          </div>
+          <Link to="/choose-role" className="text-sm text-glow-cyan hover:text-white">
+            {t.categoriesLink} -&gt;
+          </Link>
+        </div>
+        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {t.categories.map((category) => (
+            <div key={category.title} className="glass-card rounded-2xl p-6">
+              <h3 className="text-lg font-semibold text-white">{category.title}</h3>
+              <p className="mt-2 text-sm text-slate-300">{category.rate}</p>
+              <p className="mt-1 text-xs text-slate-400">{category.experts}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="relative z-10 mx-auto mt-16 max-w-6xl sm:mt-20">
+        <h2 className="font-display text-2xl font-semibold text-white sm:text-3xl">
+          {t.workflowTitle}
+        </h2>
+        <div className="mt-8 grid gap-6 lg:grid-cols-2">
+          {t.workflow.map((flow) => (
+            <div key={flow.title} className="glass-card rounded-2xl p-6">
+              <h3 className="text-xl font-semibold text-white">{flow.title}</h3>
+              <ul className="mt-4 space-y-3 text-sm text-slate-300">
+                {flow.points.map((point, index) => (
+                  <li key={point} className="flex items-start gap-3">
+                    <span className="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full border border-white/10 bg-white/5 text-xs text-glow-cyan">
+                      {index + 1}
+                    </span>
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="relative z-10 mx-auto mt-16 max-w-6xl sm:mt-20">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <h2 className="font-display text-2xl font-semibold text-white sm:text-3xl">
+            {t.jobsTitle}
+          </h2>
+          <Link to="/choose-role" className="text-sm text-glow-cyan hover:text-white">
+            {t.jobsLink} -&gt;
+          </Link>
+        </div>
+        <div className="mt-8 grid gap-5 lg:grid-cols-3">
+          {t.jobs.map((job) => (
+            <div key={job.title} className="glass-card rounded-2xl p-6">
+              <h3 className="text-lg font-semibold text-white">{job.title}</h3>
+              <p className="mt-2 text-sm text-slate-300">Budget: {job.budget}</p>
+              <p className="mt-1 text-sm text-slate-400">Skills: {job.skills}</p>
+              <p className="mt-1 text-sm text-slate-400">Timeline: {job.timeline}</p>
+              <Link to="/choose-role" className="mt-4 inline-block text-sm text-slate-200">
+                {t.proposalLabel}
+              </Link>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="relative z-10 mx-auto mt-16 max-w-6xl sm:mt-20">
+        <h2 className="font-display text-2xl font-semibold text-white sm:text-3xl">
+          {t.testimonialsTitle}
+        </h2>
+        <div className="mt-8 grid gap-5 lg:grid-cols-2">
+          {t.testimonials.map((item) => (
+            <div key={item.name} className="glass-card rounded-2xl p-6">
+              <p className="text-sm text-slate-300">"{item.quote}"</p>
+              <p className="mt-4 text-sm font-semibold text-white">{item.name}</p>
+              <p className="text-xs text-slate-400">{item.role}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="relative z-10 mx-auto mt-16 max-w-6xl sm:mt-20">
+        <h2 className="font-display text-2xl font-semibold text-white sm:text-3xl">
+          {t.faqTitle}
+        </h2>
+        <div className="mt-8 space-y-3">
+          {t.faqs.map((item, index) => {
+            const isOpen = openFaq === index;
+            return (
+              <div key={item.q} className="glass-card rounded-2xl p-5">
+                <button
+                  type="button"
+                  onClick={() => setOpenFaq(isOpen ? -1 : index)}
+                  className="flex w-full items-center justify-between gap-3 text-left"
+                >
+                  <span className="text-sm font-semibold text-white">{item.q}</span>
+                  <span className="text-xs text-slate-400">{isOpen ? "Hide" : "Show"}</span>
+                </button>
+                {isOpen ? (
+                  <p className="mt-3 text-sm text-slate-300">{item.a}</p>
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="relative z-10 mx-auto mt-16 max-w-6xl rounded-3xl bg-gradient-to-r from-[#0e1530] via-[#101a3a] to-[#0b132b] p-6 text-center shadow-card sm:mt-20 sm:p-10 lg:p-14">
+        <h2 className="font-display text-2xl font-semibold text-white sm:text-4xl">
+          {t.ctaTitle}
+        </h2>
+        <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-300 sm:text-base">
+          {t.ctaBody}
+        </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-3 sm:gap-4">
+          <Link to="/choose-role" className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto">{t.ctaA}</Button>
+          </Link>
+          <Link to="/login" className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto" variant="ghost">
+              {t.ctaB}
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      <footer className="relative z-10 mx-auto mt-16 max-w-6xl border-t border-white/10 pt-10 text-sm text-slate-400 sm:mt-20">
+        <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr_1fr_1fr]">
+          <div>
+            <BrandLogo name={t.brand} textClassName="text-lg" />
+            <p className="mt-4 text-sm text-slate-400">{t.footerTag}</p>
+          </div>
+          {t.footerCols.map((column) => (
+            <div key={column.title}>
+              <h4 className="text-sm font-semibold text-white">{column.title}</h4>
+              <ul className="mt-4 space-y-2">
+                {column.links.map((link) => (
+                  <li key={link}>
+                    <Link to="/choose-role" className="hover:text-white">
+                      {link}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-slate-500">
+          <span>{t.footerCopyL}</span>
+          <span>{t.footerCopyR}</span>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+

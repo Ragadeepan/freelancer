@@ -1,0 +1,1 @@
+const l=["visionmeet"],t=i=>String(i||"").trim().toLowerCase();function e(i){const n=t((i==null?void 0:i.jobTitle)||(i==null?void 0:i.title)||(i==null?void 0:i.projectTitle));return n?l.some(s=>n.includes(s)):!1}function f(i=[]){return i.filter(n=>!e(n))}export{f};

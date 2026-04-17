@@ -1,0 +1,1 @@
+import{y as o,h as r,t as m}from"./firebase-DQxkYY0o.js";import{f as a}from"./index-CV2IJXKH.js";async function f({actor:t,action:i,targetId:s}){if(!(!t||!i||!s))return o(r(a,"activityLogs"),{actor:t,action:i,targetId:s,timestamp:m()})}export{f as l};

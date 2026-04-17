@@ -1,0 +1,9 @@
+=4000 : The term '=4000' is not recognized as the name of a cmdlet, function, script file, or operable program. Check 
+the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:1
++ ='4000'; npm run dev
++ ~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (=4000:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+^C

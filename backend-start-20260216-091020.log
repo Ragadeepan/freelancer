@@ -1,0 +1,19 @@
+
+> freelancer-marketplace-ui@0.1.0 start:backend
+> npm --prefix backend run start
+
+
+> freelancer-marketplace-payments-api@1.0.0 start
+> node src/server.js
+
+[payments-api] listening on port 4000
+[0mGET /health [32m200[0m 3.919 ms - 25[0m
+[0mGET /health [32m200[0m 0.823 ms - 25[0m
+[0mPOST /api/files/gov-id [33m401[0m 10.616 ms - 114[0m
+[0mGET /uploads/userGovIds/gov-test-user/1771213257291-aadhaar.pdf [32m200[0m 6.063 ms - 14[0m
+[0mPOST /api/files/gov-id [32m201[0m 2601.553 ms - 358[0m
+[0mGET /health [32m200[0m 0.370 ms - 25[0m
+[0mPOST /api/files/client-gov-id [33m404[0m 0.713 ms - 71[0m
+[0mGET /health [32m200[0m 0.304 ms - 25[0m
+
+C:\freelancer 7.2.26>

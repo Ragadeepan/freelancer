@@ -1,0 +1,657 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isAdmin() {
+      return signedIn() && userDoc().data.role == "admin";
+    }
+
+    function isClient() {
+      return signedIn() && userDoc().data.role == "client";
+    }
+
+    function isFreelancer() {
+      return signedIn() && userDoc().data.role == "freelancer";
+    }
+
+    function isClientApproved() {
+      return isClient()
+        && userDoc().data.status == "approved"
+        && userDoc().data.profileCompletion == 100;
+    }
+
+    function isFreelancerApproved() {
+      return isFreelancer()
+        && userDoc().data.status == "approved"
+        && userDoc().data.profileCompletion == 100;
+    }
+
+    function hasText(value) {
+      return value is string && value.size() > 0;
+    }
+
+    function validNotificationCreatePayload() {
+      return request.resource.data.recipientId is string
+        && request.resource.data.recipientId.size() > 0
+        && request.resource.data.type is string
+        && request.resource.data.type.size() > 0
+        && request.resource.data.title is string
+        && request.resource.data.message is string
+        && request.resource.data.read is bool
+        && request.resource.data.read == false
+        && request.resource.data.createdAt == request.time;
+    }
+
+    function isNotificationActorWrite() {
+      return signedIn()
+        && request.resource.data.actorId == request.auth.uid
+        && validNotificationCreatePayload();
+    }
+
+    function hasFreelancerPortfolio() {
+      return (userDoc().data.portfolioLinks is list
+          && userDoc().data.portfolioLinks.size() > 0)
+        || hasText(userDoc().data.portfolioLink)
+        || hasText(userDoc().data.portfolio);
+    }
+
+    function hasFreelancerResume() {
+      return (userDoc().data.resume is map
+          && userDoc().data.resume.url is string
+          && userDoc().data.resume.url.size() > 0)
+        || hasText(userDoc().data.resumeUrl);
+    }
+
+    function hasFreelancerSkills() {
+      return (userDoc().data.primarySkills is list
+          && userDoc().data.primarySkills.size() >= 3);
+    }
+
+    function hasFreelancerName() {
+      return hasText(userDoc().data.name)
+        || hasText(userDoc().data.displayName)
+        || hasText(userDoc().data.fullName);
+    }
+
+    function hasFreelancerPhone() {
+      return hasText(userDoc().data.phone)
+        || hasText(userDoc().data.contactPhone)
+        || hasText(userDoc().data.mobile);
+    }
+
+    function hasFreelancerProfileImage() {
+      return hasText(userDoc().data.photoURL)
+        || hasText(userDoc().data.profileImage);
+    }
+
+    function hasFreelancerAbout() {
+      return hasText(userDoc().data.bio)
+        || hasText(userDoc().data.about);
+    }
+
+    function hasFreelancerHourlyRate() {
+      return hasText(userDoc().data.hourlyRate);
+    }
+
+    function isFreelancerReadyForMarketplace() {
+      return isFreelancerApproved()
+        && hasFreelancerName()
+        && hasFreelancerPhone()
+        && hasFreelancerProfileImage()
+        && hasFreelancerSkills()
+        && hasText(userDoc().data.experience)
+        && hasFreelancerHourlyRate()
+        && hasFreelancerAbout()
+        && hasFreelancerPortfolio()
+        && hasFreelancerResume();
+    }
+
+    function jobDoc(jobId) {
+      return get(/databases/$(database)/documents/jobs/$(jobId));
+    }
+
+    function proposalDoc(proposalId) {
+      return get(/databases/$(database)/documents/proposals/$(proposalId));
+    }
+
+    function projectDoc(projectId) {
+      return get(/databases/$(database)/documents/projects/$(projectId));
+    }
+
+    function contractDoc(contractId) {
+      return get(/databases/$(database)/documents/contracts/$(contractId));
+    }
+
+    function isContractMember(contractId) {
+      return signedIn()
+        && (contractDoc(contractId).data.clientId == request.auth.uid
+          || contractDoc(contractId).data.freelancerId == request.auth.uid);
+    }
+
+    function isProjectMember(projectId) {
+      return signedIn()
+        && (projectDoc(projectId).data.clientId == request.auth.uid
+          || projectDoc(projectId).data.freelancerId == request.auth.uid);
+    }
+
+    function isConnectedProject(projectId) {
+      return projectDoc(projectId).data.status == "connected";
+    }
+
+    function isConnectedProjectMember(projectId) {
+      return isProjectMember(projectId)
+        && isConnectedProject(projectId);
+    }
+
+    match /users/{userId} {
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.id == userId;
+      allow read: if isAdmin() || request.auth.uid == userId;
+      allow list: if isAdmin();
+      allow update: if isAdmin()
+        || (request.auth.uid == userId
+          && request.resource.data.id == userId
+          && request.resource.data.role == resource.data.role
+          && (
+            (
+              request.resource.data.status == resource.data.status
+              && (
+                request.resource.data.status != "approved"
+                || request.resource.data.profileCompletion == 100
+              )
+            )
+            || (
+              request.resource.data.status == "pending_approval"
+              && resource.data.status in ["incomplete", "rejected", "pending_approval"]
+              && request.resource.data.profileCompletion == 100
+            )
+            || (
+              request.resource.data.status == "incomplete"
+              && resource.data.status in ["incomplete", "rejected", "pending_approval", "approved"]
+              && request.resource.data.profileCompletion < 100
+            )
+          ));
+      allow delete: if false;
+    }
+
+    match /bankDetails/{userId} {
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.userId == userId
+        && request.resource.data.status == "pending";
+      allow read: if isAdmin() || request.auth.uid == userId;
+      allow update: if isAdmin()
+        || (signedIn()
+          && request.auth.uid == userId
+          && request.resource.data.userId == userId
+          && request.resource.data.status == "pending"
+          && request.resource.data.verifiedByAdminId == resource.data.verifiedByAdminId
+          && request.resource.data.verifiedAt == resource.data.verifiedAt);
+      allow delete: if false;
+    }
+
+    match /jobs/{jobId} {
+      allow create: if isClientApproved()
+        && request.resource.data.clientId == request.auth.uid
+        && request.resource.data.status == "pending";
+      allow read: if resource.data.status == "approved"
+        || isAdmin()
+        || (isClient() && resource.data.clientId == request.auth.uid)
+        || (isFreelancerApproved() && resource.data.status == "approved");
+      allow update: if isAdmin()
+        || (isClientApproved()
+          && resource.data.clientId == request.auth.uid
+          && resource.data.status == "approved"
+          && !hasText(resource.data.selectedProposalId)
+          && request.resource.data.clientId == resource.data.clientId
+          && request.resource.data.status in ["hired", "assigned"]
+          && hasText(request.resource.data.selectedProposalId)
+          && hasText(request.resource.data.selectedFreelancerId)
+          && hasText(request.resource.data.projectId)
+          && hasText(request.resource.data.contractId)
+          && request.resource.data.visibleToFreelancers == false
+          && request.resource.data.isClosed == true
+          && (
+            (
+              request.resource.data.status == "hired"
+              && request.resource.data.hiredAt == request.time
+            )
+            || (
+              request.resource.data.status == "assigned"
+              && request.resource.data.assignedAt == request.time
+            )
+          )
+          && request.resource.data.closedAt == request.time
+          && request.resource.data.updatedAt == request.time
+          && proposalDoc(request.resource.data.selectedProposalId).data.jobId == jobId
+          && proposalDoc(request.resource.data.selectedProposalId).data.clientId
+            == request.auth.uid
+          && proposalDoc(request.resource.data.selectedProposalId).data.freelancerId
+            == request.resource.data.selectedFreelancerId
+          && proposalDoc(request.resource.data.selectedProposalId).data.status
+            in ["pending", "approved"]
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            "status",
+            "selectedProposalId",
+            "selectedFreelancerId",
+            "selectedFreelancerName",
+            "projectId",
+            "contractId",
+            "assignedAt",
+            "hiredAt",
+            "closedAt",
+            "isClosed",
+            "visibleToFreelancers",
+            "updatedAt"
+          ]));
+      allow delete: if isAdmin();
+    }
+
+    match /proposals/{proposalId} {
+      allow create: if isFreelancerReadyForMarketplace()
+        && request.resource.data.freelancerId == request.auth.uid
+        && request.resource.data.status == "pending"
+        && request.resource.data.clientId
+          == jobDoc(request.resource.data.jobId).data.clientId
+        && jobDoc(request.resource.data.jobId).data.status == "approved";
+      allow read: if isAdmin()
+        || (isFreelancer() && resource.data.freelancerId == request.auth.uid)
+        || (isClient()
+          && (
+            resource.data.clientId == request.auth.uid
+            || jobDoc(resource.data.jobId).data.clientId == request.auth.uid
+          ));
+      allow update: if isAdmin()
+        || (isClientApproved()
+          && jobDoc(resource.data.jobId).data.clientId == request.auth.uid
+          && request.resource.data.jobId == resource.data.jobId
+          && request.resource.data.clientId == resource.data.clientId
+          && request.resource.data.freelancerId == resource.data.freelancerId
+          && resource.data.status in ["pending", "approved"]
+          && request.resource.data.updatedAt == request.time
+          && (
+            (request.resource.data.status == "selected"
+              && request.resource.data.selectedAt == request.time
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+                "status",
+                "selectedAt",
+                "updatedAt"
+              ]))
+            || (request.resource.data.status == "not_selected"
+              && request.resource.data.notSelectedAt == request.time
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+                "status",
+                "notSelectedAt",
+                "updatedAt"
+              ]))
+          ));
+      allow delete: if isAdmin();
+    }
+
+    match /projects/{projectId} {
+      allow create: if isAdmin()
+        || (isClientApproved()
+          && request.resource.data.clientId == request.auth.uid
+          && request.resource.data.status == "assigned"
+          && hasText(request.resource.data.jobId)
+          && hasText(request.resource.data.proposalId)
+          && hasText(request.resource.data.freelancerId)
+          && request.resource.data.connectedAt == null
+          && request.resource.data.connectedBy == null
+          && request.resource.data.createdAt == request.time
+          && request.resource.data.updatedAt == request.time
+          && request.resource.data.keys().hasAll([
+            "jobId",
+            "clientId",
+            "freelancerId",
+            "proposalId",
+            "status",
+            "createdAt",
+            "updatedAt",
+            "connectedAt",
+            "connectedBy"
+          ])
+          && request.resource.data.keys().hasOnly([
+            "jobId",
+            "clientId",
+            "freelancerId",
+            "proposalId",
+            "status",
+            "createdAt",
+            "updatedAt",
+            "connectedAt",
+            "connectedBy",
+            "freelancerName",
+            "clientName",
+            "clientPhotoURL",
+            "freelancerPhotoURL",
+            "jobTitle"
+          ])
+          && jobDoc(request.resource.data.jobId).data.clientId == request.auth.uid
+          && jobDoc(request.resource.data.jobId).data.status == "approved"
+          && !hasText(jobDoc(request.resource.data.jobId).data.projectId)
+          && proposalDoc(request.resource.data.proposalId).data.jobId
+            == request.resource.data.jobId
+          && proposalDoc(request.resource.data.proposalId).data.clientId
+            == request.auth.uid
+          && proposalDoc(request.resource.data.proposalId).data.freelancerId
+            == request.resource.data.freelancerId
+          && proposalDoc(request.resource.data.proposalId).data.status
+            in ["pending", "approved"]);
+      allow read: if isAdmin() || isProjectMember(projectId);
+      allow update, delete: if isAdmin();
+    }
+
+    match /payments/{paymentId} {
+      allow create: if isAdmin()
+        || (isClientApproved()
+            && request.resource.data.receiverType == "admin"
+            && request.resource.data.payerId == request.auth.uid
+            && request.resource.data.clientId == request.auth.uid
+            && (isConnectedProject(request.resource.data.projectId)
+              || request.resource.data.sourceFlow == "contract_full_payment")
+            && projectDoc(request.resource.data.projectId).data.clientId
+              == request.auth.uid
+            && request.resource.data.status in ["pending", "paid", "held", "escrow"]);
+      allow read: if isAdmin()
+        || (isClient()
+            && (resource.data.payerId == request.auth.uid
+              || resource.data.clientId == request.auth.uid))
+        || (isFreelancer() && resource.data.freelancerId == request.auth.uid);
+      allow update: if isAdmin()
+        || (isClientApproved()
+          && resource.data.clientId == request.auth.uid
+          && resource.data.status in ["escrow", "held"]
+          && request.resource.data.status == "release_pending"
+          && request.resource.data.releaseRequestedAt == request.time
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            "status",
+            "releaseRequestedAt",
+            "updatedAt"
+          ]));
+      allow delete: if isAdmin();
+    }
+
+    match /escrow/{escrowId} {
+      allow create, update, delete: if isAdmin();
+      allow read: if isAdmin();
+    }
+
+    match /payouts/{payoutId} {
+      allow create: if isClient()
+        && request.resource.data.status == "pending"
+        && hasText(request.resource.data.contractId)
+        && contractDoc(request.resource.data.contractId).data.clientId == request.auth.uid
+        && request.resource.data.freelancerId
+          == contractDoc(request.resource.data.contractId).data.freelancerId;
+      allow read: if isAdmin()
+        || (isFreelancer() && resource.data.freelancerId == request.auth.uid)
+        || (isClient()
+          && contractDoc(resource.data.contractId).data.clientId == request.auth.uid);
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /transactions/{transactionId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /disputes/{disputeId} {
+      allow create: if (isClient() || isFreelancer())
+        && request.resource.data.raisedBy == request.auth.uid
+        && request.resource.data.status == "open"
+        && isConnectedProjectMember(request.resource.data.projectId);
+      allow read: if isAdmin() || isConnectedProjectMember(resource.data.projectId);
+      allow update, delete: if isAdmin();
+    }
+
+    match /projectUpdates/{updateId} {
+      allow create: if isConnectedProjectMember(request.resource.data.projectId)
+        && request.resource.data.requestedBy == request.auth.uid
+        && request.resource.data.status == "pending";
+      allow read: if isAdmin() || isConnectedProjectMember(resource.data.projectId);
+      allow update, delete: if isAdmin();
+    }
+
+    match /activityLogs/{logId} {
+      allow create: if signedIn()
+        && request.resource.data.actor == request.auth.uid;
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    match /messages/{messageId} {
+      allow create: if isConnectedProjectMember(request.resource.data.projectId)
+        && request.resource.data.senderId == request.auth.uid;
+      allow read: if isAdmin() || isConnectedProjectMember(resource.data.projectId);
+      allow update, delete: if false;
+    }
+
+    match /settings/{docId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /notifications/{notificationId} {
+      allow create: if isAdmin() || isNotificationActorWrite();
+      allow read: if isAdmin()
+        || (signedIn() && resource.data.recipientId == request.auth.uid);
+      allow update: if isAdmin()
+        || (signedIn()
+          && resource.data.recipientId == request.auth.uid
+          && request.resource.data.recipientId == resource.data.recipientId);
+      allow delete: if false;
+    }
+
+    match /contractFiles/{fileId} {
+      allow read: if signedIn() && isContractMember(resource.data.contractId);
+      allow create: if signedIn()
+        && hasText(request.resource.data.contractId)
+        && isContractMember(request.resource.data.contractId)
+        && request.resource.data.uploadedBy == request.auth.uid
+        && request.resource.data.role in ["client", "freelancer"]
+        && (
+          (
+            request.resource.data.role == "client"
+            && contractDoc(request.resource.data.contractId).data.clientId == request.auth.uid
+          )
+          || (
+            request.resource.data.role == "freelancer"
+            && contractDoc(request.resource.data.contractId).data.freelancerId == request.auth.uid
+          )
+        )
+        && hasText(request.resource.data.fileName)
+        && hasText(request.resource.data.fileUrl)
+        && request.resource.data.uploadedAt == request.time;
+      allow update, delete: if false;
+    }
+
+    match /contractActivity/{activityId} {
+      allow read: if signedIn() && isContractMember(resource.data.contractId);
+      allow create: if signedIn()
+        && hasText(request.resource.data.contractId)
+        && isContractMember(request.resource.data.contractId)
+        && request.resource.data.actorId == request.auth.uid
+        && request.resource.data.actorRole in ["client", "freelancer"]
+        && (
+          (
+            request.resource.data.actorRole == "client"
+            && contractDoc(request.resource.data.contractId).data.clientId == request.auth.uid
+          )
+          || (
+            request.resource.data.actorRole == "freelancer"
+            && contractDoc(request.resource.data.contractId).data.freelancerId == request.auth.uid
+          )
+        )
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+    }
+
+    match /contracts/{contractId} {
+      function normalizeContractStatus(value) {
+        let text = string(value).lower();
+        return text == "contract_created" ? "awaiting_payment"
+          : text == "client_paid" ? "awaiting_requirements"
+          : text == "flow_approved" ? "development_ready"
+          : text == "development_started" ? "in_progress"
+          : text == "feedback_uploaded" ? "revision_requested"
+          : text == "final_approved" ? "completed"
+          : text == "release_pending" ? "completed"
+          : text == "released" ? "closed"
+          : text;
+      }
+
+      function normalizePaymentStatus(value) {
+        let text = string(value).lower();
+        return text == "escrow" ? "funded"
+          : text == "held" ? "funded"
+          : text == "released" ? "paid"
+          : text == "" ? "awaiting_payment"
+          : text;
+      }
+
+      function contractStatusBefore() {
+        return normalizeContractStatus(
+          resource.data.contractStatus != null
+            ? resource.data.contractStatus
+            : resource.data.status
+        );
+      }
+
+      function contractStatusAfter() {
+        return normalizeContractStatus(
+          request.resource.data.contractStatus != null
+            ? request.resource.data.contractStatus
+            : request.resource.data.status
+        );
+      }
+
+      function paymentStatusBefore() {
+        return normalizePaymentStatus(resource.data.paymentStatus);
+      }
+
+      function paymentStatusAfter() {
+        return normalizePaymentStatus(request.resource.data.paymentStatus);
+      }
+
+      function validClientContractTransition() {
+        return (
+          (
+            contractStatusBefore() == "awaiting_payment"
+            && contractStatusAfter() == "awaiting_requirements"
+            && paymentStatusBefore() == "awaiting_payment"
+            && paymentStatusAfter() == "funded"
+          )
+          || (
+            contractStatusBefore() == "awaiting_requirements"
+            && contractStatusAfter() == "requirements_uploaded"
+            && paymentStatusAfter() == paymentStatusBefore()
+          )
+          || (
+            contractStatusBefore() == "flow_submitted"
+            && contractStatusAfter() in ["development_ready", "flow_revision"]
+            && paymentStatusAfter() == paymentStatusBefore()
+          )
+          || (
+            contractStatusBefore() == "demo_scheduled"
+            && contractStatusAfter() == "revision_requested"
+            && paymentStatusAfter() == paymentStatusBefore()
+          )
+          || (
+            contractStatusBefore() == "final_submitted"
+            && contractStatusAfter() == "completed"
+            && paymentStatusBefore() == "funded"
+            && paymentStatusAfter() == "release_pending"
+          )
+          || (
+            contractStatusBefore() == "awaiting_requirements"
+            && contractStatusAfter() == "awaiting_requirements"
+            && paymentStatusAfter() == paymentStatusBefore()
+          )
+        );
+      }
+
+      function validFreelancerContractTransition() {
+        return (
+          (
+            contractStatusBefore() in ["requirements_uploaded", "flow_revision"]
+            && contractStatusAfter() == "flow_submitted"
+            && paymentStatusAfter() == paymentStatusBefore()
+          )
+          || (
+            contractStatusBefore() == "development_ready"
+            && contractStatusAfter() == "in_progress"
+            && paymentStatusAfter() == paymentStatusBefore()
+          )
+          || (
+            contractStatusBefore() == "in_progress"
+            && contractStatusAfter() == "demo_scheduled"
+            && paymentStatusAfter() == paymentStatusBefore()
+          )
+          || (
+            contractStatusBefore() in ["revision_requested", "in_progress"]
+            && contractStatusAfter() == "final_submitted"
+            && paymentStatusAfter() == paymentStatusBefore()
+          )
+        );
+      }
+
+      allow read: if isAdmin() || isContractMember(contractId);
+      allow create: if signedIn()
+        && request.resource.data.clientId == request.auth.uid
+        && request.resource.data.contractStatus == "awaiting_payment"
+        && request.resource.data.paymentStatus == "awaiting_payment";
+      allow update: if isAdmin()
+        || (signedIn()
+          && request.auth.uid == resource.data.clientId
+          && request.resource.data.clientId == resource.data.clientId
+          && validClientContractTransition()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            "contractStatus",
+            "paymentStatus",
+            "paymentId",
+            "requirementFile",
+            "requirementUploadedAt",
+            "requirementDeadline",
+            "flowApprovedAt",
+            "flowApprovedBy",
+            "flowRevisionRequestedAt",
+            "flowRevisionRequestedBy",
+            "flowRevisionReason",
+            "feedbackDoc",
+            "feedbackUploadedAt",
+            "finalApprovedAt",
+            "finalApprovedBy",
+            "cancellationRequestedAt",
+            "cancellationRequestedBy",
+            "updatedAt"
+          ]))
+        || (signedIn()
+          && request.auth.uid == resource.data.freelancerId
+          && request.resource.data.freelancerId == resource.data.freelancerId
+          && validFreelancerContractTransition()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            "contractStatus",
+            "flowDoc",
+            "flowSubmittedAt",
+            "developmentStartedAt",
+            "demoScheduledAt",
+            "demoDate",
+            "demoTime",
+            "meetingLink",
+            "finalSubmission",
+            "finalSubmittedAt",
+            "updatedAt"
+          ]));
+      allow delete: if isAdmin();
+    }
+  }
+}

@@ -1,0 +1,15 @@
+
+> freelancer-marketplace-payments-api@1.0.0 dev
+> node --watch-path=src src/server.js
+
+[payments-api] listening on port 4000
+[0mGET /health [32m200[0m 5.441 ms - 25[0m
+[0mGET /api/proposals/jobs/QMrtlhak6he3gCeAnTc2?page=1&limit=20 [32m200[0m 4195.828 ms - 4440[0m
+Restarting 'src/server.js'
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+Restarting 'src/server.js'
+Restarting 'src/server.js'
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+Failed running 'src/server.js'. Waiting for file changes before restarting...

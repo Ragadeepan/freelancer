@@ -1,0 +1,15 @@
+
+> freelancer-marketplace-ui@0.1.0 dev:backend
+> npm --prefix backend run dev
+
+
+> freelancer-marketplace-payments-api@1.0.0 dev
+> node --watch src/server.js
+
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+[0mGET / [33m404[0m 3.864 ms - 47[0m
+[0mGET /health [32m200[0m 0.809 ms - 25[0m
+Failed running 'src/server.js'. Waiting for file changes before restarting...

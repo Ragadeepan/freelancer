@@ -1,0 +1,17 @@
+
+> freelancer-marketplace-ui@0.1.0 dev
+> vite --host 127.0.0.1 --port 5173 --strictPort
+
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m3307[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m5173[22m/[39m
+[2m11:55:08 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/BrandLogo.jsx, /src/styles/index.css[22m
+[2m11:55:12 AM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mindex.html[22m
+[2m12:15:01 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/BrandLogo.jsx, /src/styles/index.css[22m
+[2m12:55:24 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/freelancer/Dashboard.jsx, /src/styles/index.css[22m
+[2m2:33:39 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/client/Jobs.jsx, /src/styles/index.css[22m
+[2m2:42:10 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/index.css, /src/pages/freelancer/Jobs.jsx, /src/pages/client/Jobs.jsx[22m
+[2m2:44:52 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/freelancer/WorkspaceProjects.jsx, /src/styles/index.css[22m
+[2m2:44:52 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/freelancer/Messages.jsx, /src/styles/index.css[22m
+[2m2:44:52 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/client/WorkspaceProjects.jsx, /src/styles/index.css[22m

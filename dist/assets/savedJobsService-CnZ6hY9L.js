@@ -1,0 +1,1 @@
+import{u as t,j as d,k as i,d as n}from"./firebase-DQxkYY0o.js";import{f}from"./index-CV2IJXKH.js";async function u({userId:o,jobId:s,save:e}){const a=String(o||"").trim(),r=String(s||"").trim();if(!a||!r)throw new Error("userId and jobId are required.");await t(n(f,"users",a),{savedJobIds:e?d(r):i(r)})}export{u as t};

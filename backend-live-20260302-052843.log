@@ -1,0 +1,75 @@
+
+> freelancer-marketplace-ui@0.1.0 dev:backend
+> npm --prefix backend run dev
+
+
+> freelancer-marketplace-payments-api@1.0.0 dev
+> node --watch src/server.js
+
+[payments-api] listening on port 4000
+[0mPOST /api/files/client-gov-id [32m201[0m 2360.978 ms - 280[0m
+[0mPOST /api/files/client-document [32m201[0m 1244.010 ms - 286[0m
+[0mPOST /api/files/profile-picture [32m201[0m 2032.305 ms - 239[0m
+[0mGET /uploads/profilePictures/LyoYP08ACPbyrZqjSo0sxpNpbjA2/1772410277420-avatar.jpg [32m200[0m 3.225 ms - 9383[0m
+[0mPOST /api/files/client-gov-id [32m201[0m 1369.425 ms - 280[0m
+[0mPOST /api/files/client-document [32m201[0m 1231.492 ms - 286[0m
+[0mPOST /api/files/client-gov-id [32m201[0m 1917.455 ms - 280[0m
+[0mGET /uploads/userClientGovIds/LyoYP08ACPbyrZqjSo0sxpNpbjA2/1772411247147-AFS-20260301-580881.pdf [32m200[0m 1.178 ms - 4304[0m
+[0mGET /favicon.ico [33m404[0m 0.671 ms - 58[0m
+[0mPOST /api/files/client-document [32m201[0m 1268.525 ms - 286[0m
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+Failed running 'src/server.js'. Waiting for file changes before restarting...
+Restarting 'src/server.js'
+Failed running 'src/server.js'. Waiting for file changes before restarting...
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+[0mGET /uploads/profilePictures/LyoYP08ACPbyrZqjSo0sxpNpbjA2/1772410277420-avatar.jpg [36m304[0m 8.689 ms - -[0m
+[0mGET /uploads/profilePictures/LyoYP08ACPbyrZqjSo0sxpNpbjA2/1772410277420-avatar.jpg [36m304[0m 1.305 ms - -[0m
+[0mGET /uploads/profilePictures/LyoYP08ACPbyrZqjSo0sxpNpbjA2/1772410277420-avatar.jpg [36m304[0m 0.788 ms - -[0m
+[0mGET /uploads/profilePictures/LyoYP08ACPbyrZqjSo0sxpNpbjA2/1772410277420-avatar.jpg [36m304[0m 0.634 ms - -[0m
+[0mGET /uploads/profilePictures/LyoYP08ACPbyrZqjSo0sxpNpbjA2/1772410277420-avatar.jpg [36m304[0m 0.657 ms - -[0m
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+[0mGET /uploads/profilePictures/LyoYP08ACPbyrZqjSo0sxpNpbjA2/1772410277420-avatar.jpg [36m304[0m 8.649 ms - -[0m
+Restarting 'src/server.js'
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+Restarting 'src/server.js'
+Failed running 'src/server.js'. Waiting for file changes before restarting...
+Restarting 'src/server.js'
+Failed running 'src/server.js'. Waiting for file changes before restarting...
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+Restarting 'src/server.js'
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+Restarting 'src/server.js'
+Failed running 'src/server.js'. Waiting for file changes before restarting...
+Restarting 'src/server.js'
+Restarting 'src/server.js'
+Failed running 'src/server.js'. Waiting for file changes before restarting...
+Restarting 'src/server.js'
+Restarting 'src/server.js'
+Restarting 'src/server.js'
+Restarting 'src/server.js'
+Failed running 'src/server.js'. Waiting for file changes before restarting...
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+Restarting 'src/server.js'
+[payments-api] listening on port 4000
+Failed running 'src/server.js'. Waiting for file changes before restarting...

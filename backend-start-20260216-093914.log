@@ -1,0 +1,11 @@
+
+> freelancer-marketplace-ui@0.1.0 start:backend
+> npm --prefix backend run start
+
+
+> freelancer-marketplace-payments-api@1.0.0 start
+> node src/server.js
+
+[payments-api] listening on port 4000
+
+C:\freelancer 7.2.26>
