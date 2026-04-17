@@ -1,55 +1,179 @@
-# Growlanzer (Admin-Governed)
+# 🚀 Growlanzer – Admin-Controlled Freelancer Marketplace
 
-Premium, role-based freelancer marketplace UI with Firebase authentication, Firestore, Storage, and strict admin approvals.
+A full-stack freelancer marketplace platform where **clients and freelancers connect**, with **admin-controlled workflow, secure payments, and project tracking**.
 
-## Quick start
-1. Copy `.env.example` to `.env` and fill Firebase values.
-2. Install dependencies: `npm install`
-3. Start dev server: `npm run dev`
+---
 
-## Payment API (Express)
-1. Copy `backend/.env.example` to `backend/.env` and fill Firebase Admin + gateway keys.
-2. Install backend dependencies: `npm --prefix backend install`
-3. Run backend: `npm run dev:backend`
-4. Set `VITE_API_BASE_URL` in root `.env` (default `http://localhost:4000`).
+## 🌐 Live Website
 
-## Domain Setup (Production)
-- Frontend `.env`: set `VITE_API_BASE_URL=https://api.your-domain.com` (or keep empty when frontend and backend share same origin/proxy).
-- Backend `.env`: set `FRONTEND_ORIGIN=https://your-domain.com,https://www.your-domain.com`.
-- Backend `.env`: set `BACKEND_PUBLIC_URL=https://api.your-domain.com` for correct upload file URLs.
+👉 https://freelancer-99659.web.app/
 
-If backend API is not reachable, core marketplace flows (proposal submit/list, select freelancer, project connect/access) automatically fallback to direct Firestore operations.
+---
 
-## Roles & Access
-- Users are created with `status="pending"` and require Admin approval.
-- Admin accounts are provisioned manually in Firestore with `role="admin"` and `status="approved"`.
-- Route guards enforce role + approval before dashboards load.
+## 📌 Project Overview
 
-## Core Routes
-Public: `/`, `/login`, `/signup`, `/admin/login`
-Client: `/client/dashboard`, `/client/post-job`, `/client/jobs`, `/client/projects`, `/client/payments`
-Freelancer: `/freelancer/dashboard`, `/freelancer/jobs`, `/freelancer/proposals`, `/freelancer/projects`
-Admin: `/admin`, `/secure-admin/login`, `/secure-admin/dashboard`, `/secure-admin/users`, `/secure-admin/jobs`, `/secure-admin/proposals`, `/secure-admin/projects`, `/secure-admin/payments`, `/secure-admin/disputes`, `/secure-admin/settings`
+Growlanzer is a role-based freelance platform designed to ensure **quality, security, and control** through an admin-managed system.
 
-## Firebase
-- Config in `src/firebase/firebase.js`
-- Auth + Profile logic in `src/contexts/AuthContext.jsx`
-- Firestore services in `src/services/*`
-- Project status updates flow through `projectUpdates` collection for admin approval.
+* Clients post jobs
+* Freelancers submit proposals
+* Admin approves users and jobs
+* Payments handled via escrow model
 
-## Firestore Schema (Core)
-Collections:
-- `users/{uid}`: `{ name, email, phone, role, status, createdAt }`
-- `jobs/{jobId}`: `{ clientId, title, description, budget, status, createdAt }`
-- `proposals/{proposalId}`: `{ jobId, freelancerId, bidAmount, message, status, createdAt }`
-- `projects/{projectId}`: `{ jobId, clientId, freelancerId, status, createdAt }`
-- `payments/{paymentId}`: `{ projectId, amount, commission, status }`
-- `activityLogs/{logId}`: `{ actor, action, targetId, timestamp }`
-- `messages/{messageId}`: `{ projectId, senderId, recipientId, body, createdAt }`
+---
 
-Every status change writes an `activityLogs` entry.
+## ✨ Core Features
 
-## Security Rules
-See `firestore.rules` and `storage.rules` for admin-gated access and tenant isolation.
+### 🔐 Authentication & Roles
+
+* Firebase Authentication
+* Role-based system (Client / Freelancer / Admin)
+* Admin approval required for full access
+
+---
+
+### 👤 Client Features
+
+* Post jobs with budget and details
+* View and compare freelancer proposals
+* Select best freelancer (Top 3 filtering)
+* Track project progress
+* Secure payment system
+
+---
+
+### 👨‍💻 Freelancer Features
+
+* Browse available jobs
+* Submit proposals with pricing & timeline
+* Work on selected projects
+* Deliver completed work
+* Receive payments after approval
+
+---
+
+### 🛡 Admin Panel
+
+* Approve users (Client & Freelancer)
+* Approve job postings
+* Monitor proposals and projects
+* Manage payments and disputes
+* Full system control
+
+---
+
+### 💰 Payment System
+
+* Escrow-based workflow
+* Client → Admin → Freelancer
+* Commission-based model
+* Secure transaction flow
+
+---
+
+## 🛠 Tech Stack
+
+### Frontend
+
+* React (Vite)
+* Tailwind CSS
+
+### Backend
+
+* Node.js
+* Express.js
+
+### Database & Auth
+
+* Firebase Authentication
+* Firestore Database
+* Firebase Storage
+
+### Hosting
+
+* Firebase Hosting
+
+---
+
+## ⚙️ Setup Instructions
+
+### 🔹 Frontend
+
+```bash
+npm install
+npm run dev
+```
+
+### 🔹 Backend
+
+```bash
+npm --prefix backend install
+npm run dev:backend
+```
+
+---
+
+## 🔗 API Configuration
+
+Frontend `.env`
+
+```
+VITE_API_BASE_URL=http://localhost:4000
+```
+
+Production:
+
+```
+VITE_API_BASE_URL=https://api.your-domain.com
+```
+
+---
+
+## 📂 Project Structure
+
+* `/src` → Frontend
+* `/backend` → API
+* `/public` → Static assets
+
+---
+
+## 🗄 Firestore Collections
+
+* users
+* jobs
+* proposals
+* projects
+* payments
+* messages
+* activityLogs
+
+---
+
+## 🔒 Security
+
+* Role-based access control
+* Admin approval system
+* Firestore security rules
+
+---
+
+## 🚀 Future Improvements
+
+* Real-time chat system
+* AI-based proposal ranking
+* Payment gateway (Razorpay / Stripe)
+* Notifications system
+* UI/UX enhancements
+
+---
+
+## 👨‍💻 Author
+
+Ragadeepan
+
+---
+
+## 📌 Note
+
+This project demonstrates a complete real-world freelance marketplace architecture with admin-controlled workflow and secure system design.
 
 
